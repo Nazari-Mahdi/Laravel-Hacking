@@ -29,7 +29,6 @@ class CreateUsersRequest extends FormRequest
             'role_id' => 'required',
             'is_active' => 'required',
             'password' => 'required',
-            'photo_id' => 'required|mimes:svg,gif,jpeg,jpg,svg',
         ];
     }
 }

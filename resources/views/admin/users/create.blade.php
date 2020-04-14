@@ -5,7 +5,7 @@
 
     <div style="padding-top: 40px;">
 
-        {!! Form::open(['method'=>'POST' , 'action' =>'AdminUsersController@store' , 'enctype' => 'multipart/form-data']) !!}
+        {!! Form::open(['method'=>'POST' , 'action' =>'AdminUsersController@store' , 'files' =>true]) !!}
 
         <div class="form-group row" style="padding-bottom: 20px">
             {!! Form::label('name' , 'User Name') !!}

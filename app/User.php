@@ -45,9 +45,15 @@ class User extends Authenticatable
 
     }
 
+    public function photo(){
+
+        return $this->belongsTo(Photo::class);
+
+    }
+
     public function deletePhoto(){
 
-        Storage::delete()->$this->photo_id;
+        \Storage::delete($this->photo_id);
 
     }
 
@@ -63,6 +69,12 @@ class User extends Authenticatable
 
     }
 
+
+    public function posts(){
+
+        return $this->hasMany(Post::class);
+
+    }
 
 
 

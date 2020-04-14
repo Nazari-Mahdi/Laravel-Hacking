@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Users\CreateUsersRequest;
 use App\Http\Requests\Users\UpdateUsersRequest;
+use App\Photo;
 use App\Role;
 use App\User;
 use Illuminate\Http\Request;
@@ -24,15 +25,24 @@ class AdminUsersController extends Controller
 
     public function store(CreateUsersRequest $request)
     {
-        $photo_id = $request->photo_id->store('users-photo');
-        User::create([
-            'name' => $request -> name ,
-            'email' => $request -> email ,
-            'role_id' => $request -> role_id,
-            'is_active' =>  $request -> is_active,
-            'password' => bcrypt('password'),
-            'photo_id' => $photo_id,
-        ]);
+        $data = $request->all();
+
+        if ( $file = $request->hasFile('photo_id')){
+
+            $file = $request->file('photo_id');
+
+            $name = $file->getClientOriginalName();
+
+            $file->move('photos/users-photo' , $name);
+            $photo = Photo::create(['file' => $name ]);
+
+            $data['photo_id'] = $photo->id ;
+        }
+
+        $data['password'] = bcrypt($request->password);
+
+        User::create($data);
+
 
         return redirect()->route('users.index');
     }
@@ -49,15 +59,24 @@ class AdminUsersController extends Controller
     }
 
 
-    public function update(UpdateUsersRequest $request, $user)
+    public function update(UpdateUsersRequest $request, $id)
     {
-        $data = $request->only(['name' , 'email' , 'role_id' , 'is_active' , 'password']);
-        if ($request->has('photo_id')){
-            $photo_id = $request->photo_id->store('users-photo');
-            unlink(public_path() . "/storage/users-photo/" . $user );
-            $data['photo_id'] = $photo_id;
+        $user = User::findOrFail($id);
+
+        $data= $request->all();
+
+        if ($file = $request->hasFile('photo_id')){
+            $file = $request->file('photo_id');
+            $name = $file->getClientOriginalName();
+            $file->move('photos/users-photo' , $name);
+            $photo = Photo::create(['file' => $name ]);
+
+            $data['photo_id'] = $photo->id;
         }
+        $data['password'] = bcrypt($request->password);
+
         $user->update($data);
+
 
         return redirect()->route('users.index');
     }
@@ -67,7 +86,7 @@ class AdminUsersController extends Controller
     {
        $user = User::findOrFail($id);
 
-       unlink(public_path() . "/storage/" . $user->photo_id);
+       unlink(public_path('photos/users-photo') . $user->photo->file);
 
        $user->delete();
 

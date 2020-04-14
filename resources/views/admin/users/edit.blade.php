@@ -9,7 +9,7 @@
 
     <div style="padding-top: 40px; margin-bottom: 100px">
 
-        {!! Form::model($user ,['method'=>'PUT' , 'route' => ['users.update', $user->id] , 'enctype' => 'multipart/form-data']) !!}
+        {!! Form::model($user ,['method'=>'PUT' , 'action' => ['AdminUsersController@update', $user->id] , 'files' => true]) !!}
 
         <div class="form-group row" style="padding-bottom: 20px">
             {!! Form::label('name' , 'User Name') !!}
